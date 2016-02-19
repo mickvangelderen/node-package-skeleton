@@ -1,5 +1,7 @@
+import EXAMPLE_VARIABLE from './config/EXAMPLE_VARIABLE'
+
 function hello() {
-	return 'Hello World!'
+	return EXAMPLE_VARIABLE
 }
 
 export default hello

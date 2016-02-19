@@ -1,13 +1,14 @@
 /* eslint-env mocha */
-import hello from './'
+import EXAMPLE_VARIABLE from './config/EXAMPLE_VARIABLE'
 import expect from 'must'
+import hello from './'
 
 describe(__filename, () => {
 	it('should export a function', () => {
 		expect(hello).to.be.a.function()
 	})
 
-	it('should return "Hello World!" when called', () => {
-		expect(hello()).to.equal("Hello World!")
+	it(`should return "${EXAMPLE_VARIABLE}" when called`, () => {
+		expect(hello()).to.equal(EXAMPLE_VARIABLE)
 	})
 })
