@@ -4,19 +4,28 @@
     "name": "NODE_PACKAGE_SKELETON_AUTHOR_NAME",
     "url": "NODE_PACKAGE_SKELETON_AUTHOR_URL"
   },
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.13.4",
+    "morgan": "^1.7.0"
+  },
   "description": "NODE_PACKAGE_SKELETON_DESCRIPTION",
   "devDependencies": {
     "babel-cli": "^6.5.1",
     "babel-core": "^6.5.2",
+    "babel-loader": "^6.2.4",
     "babel-preset-es2015-node4": "^2.0.3",
     "babel-register": "^6.5.2",
     "bluebird": "^3.3.3",
+    "chokidar": "^1.4.3",
     "eslint": "^2.0.0",
+    "funko": "^0.4.0",
+    "funko-fs": "^0.1.1",
+    "glob": "^7.0.3",
     "mocha": "^2.4.5",
     "must": "^0.13.1",
     "semver": "^5.1.0",
-    "sort-object-circular": "^0.1.1"
+    "sort-object-circular": "^0.1.1",
+    "webpack": "^1.12.14"
   },
   "engines": {
     "node": "^4.0.0",
@@ -27,7 +36,7 @@
   "name": "NODE_PACKAGE_SKELETON_NAME",
   "repository": "NODE_PACKAGE_SKELETON_REPOSITORY",
   "scripts": {
-    "build": "babel src --out-dir lib --ignore \"*.test.js\"",
+    "build": "babel-node tools/build",
     "check-node-version": "babel-node tools/check-node-version",
     "clean": "rm -rf lib",
     "lint": "eslint src test",
@@ -36,7 +45,9 @@
     "preversion": "npm run clean && npm run build",
     "setup": "cp tools/hooks/* .git/hooks/ && git config push.followTags true",
     "sort-configuration-files": "babel-node tools/sort-configuration-files",
-    "test": "npm run check-node-version && npm run lint && mocha \"{src,test}/**/*.test.js\""
+    "start": "node lib/server/instance",
+    "test": "npm run check-node-version && npm run lint && mocha \"{src,test}/**/*.test.js\"",
+    "watch": "babel-node tools/watch"
   },
   "version": "0.1.0"
 }
