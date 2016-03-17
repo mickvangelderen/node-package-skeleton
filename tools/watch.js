@@ -2,8 +2,10 @@
 import BUILD_PATH from './config/BUILD_PATH'
 import chokidar from 'chokidar'
 import copyFile from './util/copy-file'
+import ManagedSpawn from './util/managed-spawn'
 import pipe from 'funko/lib/pipe'
 import SOURCE_PATH from './config/SOURCE_PATH'
+import tap from 'funko/lib/tap'
 import transpileFile from './util/transpile-file'
 import webpack from 'webpack'
 import webpackConfig from './config/webpack'
@@ -16,6 +18,8 @@ const errorToStack = err => {
 	}
 }
 
+const server = ManagedSpawn('node', ['lib/server/instance.js'], { stdio: 'inherit' })
+
 const watchBabel = chokidar.watch('**/*.js', {
 	cwd: SOURCE_PATH,
 	ignore: '*.test.js'
@@ -23,7 +27,10 @@ const watchBabel = chokidar.watch('**/*.js', {
 
 const transpile = file => {
 	transpileFile(SOURCE_PATH, BUILD_PATH, file)
-	.fork(pipe([ errorToStack, console.error ]), console.log)
+	.fork(
+		pipe([ errorToStack, console.error ]),
+		pipe([ tap(server.restart), console.log ])
+	)
 }
 
 watchBabel.on('add', transpile)
