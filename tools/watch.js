@@ -62,6 +62,6 @@ var watchWebpack = webpack(webpackConfig)
 
 watchWebpack.watch({}, (error, stats) => {
 	if (error) return console.error(error)
-	restartClient()
+	if (!stats.hasErrors) restartClient()
 	console.log(stats.toString({ colors: true }))
 })
