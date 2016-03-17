@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { spawn } from 'child_process'
 
 const STOPPED = { state: 'STOPPED' }

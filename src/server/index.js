@@ -13,6 +13,7 @@ server.get(/\/[^.]*$/, (req, res) => {
 <html>
 	<head>
 		<title>Example Page</title>
+		<link href="/index.css" rel="stylesheet" />
 	</head>
 	<body>
 		<h1>Hello World</h1>

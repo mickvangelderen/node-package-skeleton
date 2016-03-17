@@ -24,6 +24,8 @@
     "mocha": "^2.4.5",
     "must": "^0.13.1",
     "semver": "^5.1.0",
+    "socket.io": "^1.4.5",
+    "socket.io-client": "^1.4.5",
     "sort-object-circular": "^0.1.1",
     "webpack": "^1.12.14"
   },
