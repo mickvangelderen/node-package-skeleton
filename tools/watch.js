@@ -29,7 +29,7 @@ const restartServer = tap(server.restart)
 
 const watchBabel = chokidar.watch('**/*.js', {
 	cwd: SOURCE_PATH,
-	ignore: '*.test.js'
+	ignore: [ '*.test.js', 'client/**/*' ]
 })
 
 const transpile = file => {

@@ -20,7 +20,7 @@ const errorToStack = err => {
 
 const performBabel = glob({
 	cwd: SOURCE_PATH,
-	ignore: '*.test.js'
+	ignore: [ '*.test.js', 'client/**/*' ]
 }, '**/*.js')
 // Future Error [ String ]
 .chain(pipe([

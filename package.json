@@ -44,7 +44,7 @@
   "name": "NODE_PACKAGE_SKELETON_NAME",
   "repository": "NODE_PACKAGE_SKELETON_REPOSITORY",
   "scripts": {
-    "build": "babel-node tools/build",
+    "build": "npm run clean && babel-node tools/build",
     "check-node-version": "babel-node tools/check-node-version",
     "clean": "rm -rf lib",
     "lint": "eslint src test",
@@ -55,7 +55,7 @@
     "sort-configuration-files": "babel-node tools/sort-configuration-files",
     "start": "node lib/server/instance",
     "test": "npm run check-node-version && npm run lint && mocha \"{src,test}/**/*.test.js\"",
-    "watch": "babel-node tools/watch"
+    "watch": "npm run clean && babel-node tools/watch"
   },
   "version": "0.1.0"
 }
