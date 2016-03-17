@@ -24,6 +24,7 @@ function ManagedSpawn(command, args, options) {
 		child = spawn(command, args, options)
 		child.on('error', onStop)
 		child.on('close', onStop)
+		process.on('exit', stop)
 		state = STARTED
 	}
 
@@ -31,6 +32,7 @@ function ManagedSpawn(command, args, options) {
 		if (state !== STARTED) return
 		child.kill()
 		child = null
+		process.removeListener('exit', stop)
 		state = STOPPING
 	}
 
