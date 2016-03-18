@@ -2,6 +2,7 @@
 import BUILD_PATH from './config/BUILD_PATH'
 import chokidar from 'chokidar'
 import copyFile from './util/copy-file'
+import log from './util/log'
 import ManagedSpawn from './util/managed-spawn'
 import pipe from 'funko/lib/pipe'
 import RELOAD_SERVER_PORT from './config/RELOAD_SERVER_PORT'
@@ -11,6 +12,7 @@ import tap from 'funko/lib/tap'
 import transpileFile from './util/transpile-file'
 import webpack from 'webpack'
 import webpackConfig from './config/webpack'
+import webpackStats from './config/webpack-stats'
 
 const errorToStack = err => {
 	if (err._babel && err.codeFrame) {
@@ -35,8 +37,8 @@ const watchBabel = chokidar.watch('**/*.js', {
 const transpile = file => {
 	transpileFile(SOURCE_PATH, BUILD_PATH, file)
 	.fork(
-		pipe([ errorToStack, console.error ]),
-		pipe([ restartServer, console.log ])
+		pipe([ errorToStack, log.error ]),
+		pipe([ restartServer, file => log.info(`Transpiled ${file}.`) ])
 	)
 }
 
@@ -50,8 +52,8 @@ const watchCopy = chokidar.watch('static/**/*', {
 const copy = file => {
 	copyFile(SOURCE_PATH, BUILD_PATH, file)
 	.fork(
-		console.error, 
-		pipe([ restartClient, console.log ])
+		log.error, 
+		pipe([ restartClient, file => log.info(`Copied ${file}.`) ])
 	)
 }
 
@@ -61,7 +63,7 @@ watchCopy.on('change', copy)
 var watchWebpack = webpack(webpackConfig)
 
 watchWebpack.watch({}, (error, stats) => {
-	if (error) return console.error(error)
+	if (error) return log.error(error)
 	if (!stats.hasErrors) restartClient()
-	console.log(stats.toString({ colors: true }))
+	log.info(stats.toString(webpackStats))
 })

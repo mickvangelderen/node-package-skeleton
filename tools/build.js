@@ -3,12 +3,16 @@ import all from 'funko/lib/future/all'
 import BUILD_PATH from './config/BUILD_PATH'
 import copyFile from './util/copy-file'
 import glob from './util/glob'
+import log from './util/log'
 import map from 'funko/lib/map'
+import path from 'path'
 import pipe from 'funko/lib/pipe'
 import SOURCE_PATH from './config/SOURCE_PATH'
+import tap from 'funko/lib/tap'
 import transpileFile from './util/transpile-file'
 import webpack from 'webpack'
 import webpackConfig from './config/webpack'
+import webpackStats from './config/webpack-stats'
 
 const errorToStack = err => {
 	if (err._babel && err.codeFrame) {
@@ -25,7 +29,10 @@ const performBabel = glob({
 // Future Error [ String ]
 .chain(pipe([
 	// [ String ]
-	map(file => transpileFile(SOURCE_PATH, BUILD_PATH, file)),
+	map(file =>
+		transpileFile(SOURCE_PATH, BUILD_PATH, file)
+		.map(tap(() => log.info(`Transpiled ${file}.`)))
+	),
 	// [ Future Error Buffer ]
 	all
 	// Future Error [ String ]
@@ -37,19 +44,22 @@ const performCopy = glob({
 // Future Error [ String ]
 .chain(pipe([
 	// [ String ]
-	map(file => copyFile(SOURCE_PATH, BUILD_PATH, file)),
+	map(file =>
+		copyFile(SOURCE_PATH, BUILD_PATH, file)
+		.map(tap(() => log.info(`Copied ${file}.`)))
+	),
 	// [ Future Error Buffer ]
 	all
 	// Future Error [ String ]
 ]))
 
 all([
-	performBabel.map(() => 'Transpiled javascript.'),
-	performCopy.map(() => 'Copied static files.')
+	performBabel.map(tap(() => log.info(`Transpiled javascript from ${path.relative(process.cwd(), SOURCE_PATH)}/ to ${path.relative(process.cwd(), BUILD_PATH)}/.`))),
+	performCopy.map(tap(() => log.info(`Copied static files from ${path.relative(process.cwd(), SOURCE_PATH)}/ to ${path.relative(process.cwd(), BUILD_PATH)}/.`)))
 ])
-.fork(pipe([ errorToStack, console.error ]), console.log)
+.fork(pipe([ errorToStack, log.error ]), () => {})
 
 webpack(webpackConfig, function(error, stats) {
-	if (error) return console.error(error)
-	console.log(stats.toString({ colors: true }))
+	if (error) return log.error(error)
+	log.info('Packed assets\n' + stats.toString(webpackStats))
 })
