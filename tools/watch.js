@@ -26,8 +26,8 @@ const server = ManagedSpawn('node', ['lib/server/instance.js'], { stdio: 'inheri
 
 reloadServer.listen(RELOAD_SERVER_PORT)
 
-const restartClient = tap(() => reloadServer.emit('change'))
-const restartServer = tap(server.restart)
+const restartClient = () => reloadServer.emit('change')
+const restartServer = server.restart
 
 const watchBabel = chokidar.watch('**/*.js', {
 	cwd: SOURCE_PATH,
@@ -38,7 +38,7 @@ const transpile = file => {
 	transpileFile(SOURCE_PATH, BUILD_PATH, file)
 	.fork(
 		pipe([ errorToStack, log.error ]),
-		pipe([ restartServer, file => log.info(`Transpiled ${file}.`) ])
+		pipe([ tap(restartServer), file => log.info(`Transpiled ${file}.`) ])
 	)
 }
 
@@ -53,7 +53,7 @@ const copy = file => {
 	copyFile(SOURCE_PATH, BUILD_PATH, file)
 	.fork(
 		log.error, 
-		pipe([ restartClient, file => log.info(`Copied ${file}.`) ])
+		pipe([ tap(restartClient), file => log.info(`Copied ${file}.`) ])
 	)
 }
 
@@ -64,6 +64,10 @@ var watchWebpack = webpack(webpackConfig)
 
 watchWebpack.watch({}, (error, stats) => {
 	if (error) return log.error(error)
-	if (!stats.hasErrors) restartClient()
-	log.info(stats.toString(webpackStats))
+	if (stats.hasErrors()) {
+		log.error(stats.toString(webpackStats))
+	} else {
+		log.info(stats.toString(webpackStats))
+		restartClient()
+	}
 })
