@@ -9,8 +9,7 @@
   "devDependencies": {
     "babel-cli": "^6.5.1",
     "babel-core": "^6.5.2",
-    "babel-preset-es2015-node4": "^2.0.3",
-    "babel-register": "^6.5.2",
+    "babel-preset-es2015": "^6.9.0",
     "chalk": "^1.1.1",
     "eslint": "^2.0.0",
     "funko": "^0.5.0",
@@ -32,18 +31,21 @@
   "name": "NODE_PACKAGE_SKELETON_NAME",
   "repository": "NODE_PACKAGE_SKELETON_REPOSITORY",
   "scripts": {
-    "build": "babel src --out-dir lib --ignore \"*.test.js\"",
+    "build": "babel src --out-dir lib",
     "check-node-version": "babel-node tools/check-node-version",
     "clean": "rm -rf lib",
     "lint": "eslint src test",
-    "post-checkout": "npm run -s resume",
-    "post-merge": "npm run -s resume",
-    "pre-commit": "npm run -s sort -- --error-on-changes && npm test",
-    "preversion": "npm run -s clean && npm run -s build",
-    "resume": "npm update && npm run -s check-node-version && npm prune && npm dedupe && npm outdated --long",
+    "post-checkout": "npm run resume",
+    "post-merge": "npm run resume",
+    "pre-commit": "npm run sort -- --error-on-changes && npm test",
+    "prepublish": "npm run test",
+    "preversion": "npm run test",
+    "rebuild": "npm run clean && npm run build",
+    "resume": "npm run update-dependencies && npm outdated --long",
     "setup": "cp tools/hooks/* .git/hooks/ && git config push.followTags true",
     "sort": "babel-node tools/sort",
-    "test": "npm run -s check-node-version && npm run -s lint && mocha \"{src,test}/**/*.test.js\""
+    "test": "npm run update-dependencies && npm run clean && npm run build && npm run lint && mocha \"lib/**/*.test.js\"",
+    "update-dependencies": "npm prune && npm update && npm dedupe && npm run check-node-version"
   },
   "version": "0.1.0"
 }
