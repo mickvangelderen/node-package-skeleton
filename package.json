@@ -1,0 +1,56 @@
+{
+  "author": {
+    "email": "NPS_AUTHOR_EMAIL",
+    "name": "NPS_AUTHOR_NAME",
+    "url": "NPS_AUTHOR_URL"
+  },
+  "dependencies": {},
+  "description": "NPS_DESCRIPTION",
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-core": "^6.14.0",
+    "babel-eslint": "^6.1.2",
+    "babel-plugin-flow-comments": "^6.3.19",
+    "babel-polyfill": "^6.13.0",
+    "babel-preset-es2015-node4": "^2.1.0",
+    "babel-register": "^6.14.0",
+    "documentation": "^4.0.0-beta10",
+    "eslint": "^3.4.0",
+    "eslint-plugin-flowtype": "^2.11.4",
+    "flow-bin": "^0.31.1",
+    "glob": "^7.0.6",
+    "mocha": "^3.0.2",
+    "must": "^0.13.2",
+    "remark": "^6.0.0",
+    "sort-object-circular": "^0.1.1"
+  },
+  "license": "ISC",
+  "main": "index.js",
+  "name": "NPS_NAME",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "NPS_REPOSITORY_URL"
+  },
+  "scripts": {
+    "build-documentation": "babel-node scripts/build-documentation",
+    "build-examples": "babel-node scripts/build-examples",
+    "build-readme": "babel-node scripts/build-readme",
+    "build-release": "babel-node scripts/build-release",
+    "clean-release": "rm -rf release/",
+    "flow": "flow",
+    "generate-index": "babel-node scripts/generate-index",
+    "hooks": "babel-node scripts/hooks",
+    "lint": "eslint .",
+    "postversion": "npm run clean-release && npm run build-release && cd release && npm install",
+    "prepublish": "npm run test",
+    "pretest": "npm run generate-index",
+    "preversion": "npm run lint && npm run test",
+    "resume": "npm prune && npm update && npm dedupe && npm outdate --long",
+    "setup": "git config push.followTags true && git worktree add documentation gh-pages && babel-node scripts/hooks install",
+    "sort": "babel-node scripts/sort",
+    "test": "mocha \"*.test.js\"",
+    "version": "npm run build-documentation && npm run build-readme && npm run build-examples"
+  },
+  "version": "0.1.0"
+}
